@@ -1,31 +1,84 @@
 import { useState, useCallback } from 'react'
 import { useRewards } from './hooks/useRewards'
+import { alarmApi } from './api/alarmApi'
 import Home from './screens/Home'
 import AlarmRing from './screens/AlarmRing'
 import WakeComplete from './screens/WakeComplete'
 import MyRewards from './screens/MyRewards'
+import PhoneSetup from './screens/PhoneSetup'
+
+// 간단한 userId (실제 서비스에서는 로그인 연동)
+const USER_ID = localStorage.getItem('wakeup_user_id') || (() => {
+  const id = `user-${Date.now()}`
+  localStorage.setItem('wakeup_user_id', id)
+  return id
+})()
 
 export default function App() {
-  const [screen, setScreen] = useState('home')
+  const [screen, setScreen] = useState(() =>
+    localStorage.getItem('wakeup_phone') ? 'home' : 'setup'
+  )
   const [activeAlarm, setActiveAlarm] = useState(null)
+  const [serverAlarmId, setServerAlarmId] = useState(null)
   const rewards = useRewards()
 
-  const handleAlarmFired = useCallback((alarm) => {
-    setActiveAlarm(alarm)
-  }, [])
+  const phoneNumber = localStorage.getItem('wakeup_phone') ?? ''
 
-  const handleVoipTrigger = useCallback(() => {
-    console.log('[VoIP] 서버 트리거 — 전화 발신 요청')
-    alert('📞 서버에서 전화를 거는 중입니다...\n(백엔드 연동 후 실제 전화 발신)')
-  }, [])
+  // 알람 발동 → 서버에서도 등록
+  const handleAlarmFired = useCallback(async (alarm) => {
+    setActiveAlarm(alarm)
+    const result = await alarmApi.register({
+      userId: USER_ID,
+      phoneNumber,
+      hour: alarm.hour,
+      minute: alarm.minute,
+      label: alarm.label,
+    })
+    if (result?.alarm?.id) setServerAlarmId(result.alarm.id)
+  }, [phoneNumber])
+
+  // 기상 확인 → 서버에 핑
+  const handleWakeConfirm = useCallback(async () => {
+    if (serverAlarmId) {
+      await alarmApi.confirmWake(serverAlarmId)
+      setServerAlarmId(null)
+    }
+  }, [serverAlarmId])
+
+  // VoIP 트리거
+  const handleVoipTrigger = useCallback(async () => {
+    const result = await alarmApi.triggerVoip({
+      phoneNumber,
+      userName: USER_ID,
+    })
+    console.log('[VoIP]', result)
+    if (result.offline) {
+      alert('📞 서버 미연결 상태입니다.\n서버를 실행하면 실제 전화가 걸립니다.')
+    }
+  }, [phoneNumber])
+
+  const handlePhoneSetupDone = (phone) => {
+    localStorage.setItem('wakeup_phone', phone)
+    setScreen('home')
+  }
 
   return (
     <>
+      {screen === 'setup' && (
+        <PhoneSetup onDone={handlePhoneSetupDone} />
+      )}
       {screen === 'home' && (
         <Home onNavigate={setScreen} onAlarmFired={handleAlarmFired} rewards={rewards} />
       )}
       {screen === 'ring' && (
-        <AlarmRing alarm={activeAlarm} onNavigate={setScreen} onVoipTrigger={handleVoipTrigger} />
+        <AlarmRing
+          alarm={activeAlarm}
+          onNavigate={(s) => {
+            if (s === 'complete') handleWakeConfirm()
+            setScreen(s)
+          }}
+          onVoipTrigger={handleVoipTrigger}
+        />
       )}
       {screen === 'complete' && (
         <WakeComplete onNavigate={setScreen} rewards={rewards} />

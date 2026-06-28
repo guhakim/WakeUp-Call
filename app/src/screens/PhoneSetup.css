@@ -1,0 +1,56 @@
+.setup-screen {
+  justify-content: center;
+  gap: 28px;
+  padding: 0 0 40px;
+}
+
+.setup-top { text-align: center; }
+.setup-emoji { font-size: 56px; margin-bottom: 12px; }
+.setup-title { font-size: 34px; font-weight: 700; }
+.setup-sub {
+  font-size: 18px;
+  color: var(--ink-light);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.setup-card {
+  transform: rotate(-0.5deg);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.setup-label {
+  font-size: 16px;
+  color: var(--ink-light);
+}
+
+.setup-input {
+  font-family: var(--font-main);
+  font-size: 28px;
+  border: none;
+  border-bottom: 2.5px solid var(--ink-dark);
+  background: transparent;
+  outline: none;
+  width: 100%;
+  padding: 4px 0;
+  color: var(--ink-dark);
+  letter-spacing: 2px;
+}
+
+.setup-input::placeholder { color: var(--ink-light); font-size: 22px; }
+
+.setup-error {
+  font-size: 14px;
+  color: #e53e3e;
+  margin-top: 2px;
+}
+
+.setup-notice {
+  font-size: 13px;
+  color: var(--ink-light);
+  border-top: 1.5px dashed var(--ink-light);
+  padding-top: 10px;
+  margin-top: 4px;
+}
