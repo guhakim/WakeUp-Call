@@ -1,0 +1,83 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --bg-paper:     #FDFBF4;
+  --ink-dark:     #2D2D2D;
+  --ink-light:    #8C8C8C;
+  --point-orange: #F4A228;
+  --point-sky:    #A8C9F0;
+  --point-green:  #7EC8A4;
+  --font-main:    'Gaegu', cursive;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg-paper);
+  font-family: var(--font-main);
+  color: var(--ink-dark);
+}
+
+.screen {
+  width: 100%;
+  height: 100dvh;
+  background: var(--bg-paper);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn {
+  font-family: var(--font-main);
+  font-size: 22px;
+  color: var(--ink-dark);
+  background: var(--point-orange);
+  border: 2.5px solid var(--ink-dark);
+  border-radius: 12px;
+  padding: 14px 0;
+  width: 80%;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px var(--ink-dark);
+  transition: transform 0.1s, box-shadow 0.1s;
+  transform: rotate(-0.5deg);
+}
+
+.btn:active {
+  transform: rotate(-0.5deg) translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--ink-dark);
+}
+
+.btn.green {
+  background: var(--point-green);
+}
+
+.btn.sky {
+  background: var(--point-sky);
+}
+
+.card {
+  background: white;
+  border: 2px solid var(--ink-dark);
+  border-radius: 16px;
+  box-shadow: 4px 4px 0px var(--ink-dark);
+  padding: 20px 24px;
+  width: 85%;
+}
+
+.divider {
+  border: none;
+  border-top: 2px dashed var(--ink-light);
+  width: 80%;
+  margin: 16px 0;
+}

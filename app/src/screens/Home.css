@@ -1,0 +1,160 @@
+.home-screen {
+  padding: 0 0 20px;
+}
+
+.home-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 52px 24px 16px;
+}
+
+.home-logo {
+  font-size: 22px;
+  font-weight: 700;
+  transform: rotate(-1deg);
+  display: inline-block;
+}
+
+.home-points {
+  font-size: 18px;
+  background: var(--point-orange);
+  border: 2px solid var(--ink-dark);
+  border-radius: 20px;
+  padding: 4px 14px;
+  box-shadow: 2px 2px 0 var(--ink-dark);
+  transform: rotate(0.5deg);
+  display: inline-block;
+}
+
+/* 시계 */
+.clock-area {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0 20px;
+}
+
+.clock-circle {
+  width: 190px;
+  height: 190px;
+  border: 3px solid var(--ink-dark);
+  border-radius: 50%;
+  background: white;
+  box-shadow: 5px 5px 0 var(--ink-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-1deg);
+}
+
+.clock-time {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.clock-label {
+  font-size: 14px;
+  color: var(--ink-light);
+  margin-top: 4px;
+}
+
+/* 시간 피커 */
+.time-picker {
+  transform: rotate(0.3deg);
+}
+
+.picker-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.picker-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.picker-btn {
+  font-family: var(--font-main);
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-light);
+  padding: 0 12px;
+}
+
+.picker-val {
+  font-size: 36px;
+  font-weight: 700;
+  min-width: 60px;
+  text-align: center;
+}
+
+.picker-sep {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* 알람 목록 */
+.alarm-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  overflow-y: auto;
+  max-height: 200px;
+  padding-bottom: 8px;
+}
+
+.alarm-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transform: rotate(-0.3deg);
+  cursor: pointer;
+}
+
+.alarm-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alarm-emoji {
+  font-size: 28px;
+}
+
+.alarm-time {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.alarm-sublabel {
+  font-size: 14px;
+  color: var(--ink-light);
+}
+
+.alarm-del {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: var(--ink-light);
+  cursor: pointer;
+  font-family: var(--font-main);
+}
+
+.home-footer {
+  position: absolute;
+  bottom: 20px;
+  font-size: 14px;
+  color: var(--ink-light);
+}

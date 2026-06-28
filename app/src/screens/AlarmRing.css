@@ -1,0 +1,60 @@
+.ring-screen {
+  justify-content: center;
+  gap: 32px;
+  background: var(--bg-paper);
+}
+
+.ring-box {
+  border: 3px solid var(--ink-dark);
+  border-radius: 20px;
+  background: white;
+  box-shadow: 6px 6px 0 var(--ink-dark);
+  padding: 36px 40px;
+  width: 85%;
+  text-align: center;
+  transform: rotate(-1deg);
+}
+
+.ring-box.shake {
+  animation: shakeAnim 0.4s ease;
+}
+
+@keyframes shakeAnim {
+  0%   { transform: rotate(-1deg) translateX(0); }
+  20%  { transform: rotate(-1deg) translateX(-6px); }
+  40%  { transform: rotate(-1deg) translateX(6px); }
+  60%  { transform: rotate(-1deg) translateX(-4px); }
+  80%  { transform: rotate(-1deg) translateX(4px); }
+  100% { transform: rotate(-1deg) translateX(0); }
+}
+
+.ring-emoji {
+  font-size: 52px;
+  margin-bottom: 12px;
+}
+
+.ring-time {
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ring-msg {
+  font-size: 26px;
+  color: var(--ink-dark);
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+.ring-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 0;
+}
+
+.ring-warning {
+  font-size: 15px;
+  color: var(--ink-light);
+}
