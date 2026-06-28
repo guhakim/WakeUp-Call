@@ -1,6 +1,6 @@
 .ring-screen {
   justify-content: center;
-  gap: 32px;
+  gap: 24px;
   background: var(--bg-paper);
 }
 
@@ -9,52 +9,96 @@
   border-radius: 20px;
   background: white;
   box-shadow: 6px 6px 0 var(--ink-dark);
-  padding: 36px 40px;
+  padding: 32px 40px;
   width: 85%;
   text-align: center;
   transform: rotate(-1deg);
+  transition: background 0.3s;
 }
 
-.ring-box.shake {
-  animation: shakeAnim 0.4s ease;
+.ring-box.urgent {
+  background: #fff0f0;
+  border-color: #e53e3e;
+  box-shadow: 6px 6px 0 #e53e3e;
+  animation: shakeAnim 0.5s ease infinite;
 }
 
 @keyframes shakeAnim {
   0%   { transform: rotate(-1deg) translateX(0); }
-  20%  { transform: rotate(-1deg) translateX(-6px); }
-  40%  { transform: rotate(-1deg) translateX(6px); }
-  60%  { transform: rotate(-1deg) translateX(-4px); }
-  80%  { transform: rotate(-1deg) translateX(4px); }
+  25%  { transform: rotate(-1deg) translateX(-5px); }
+  75%  { transform: rotate(-1deg) translateX(5px); }
   100% { transform: rotate(-1deg) translateX(0); }
 }
 
-.ring-emoji {
-  font-size: 52px;
-  margin-bottom: 12px;
+.ring-emoji { font-size: 52px; margin-bottom: 8px; }
+.ring-time  { font-size: 60px; font-weight: 700; line-height: 1; }
+.ring-msg   { font-size: 24px; font-weight: 700; margin-top: 6px; }
+
+/* 기상 감지 상태 카드 */
+.motion-status {
+  transform: rotate(0.4deg);
+  width: 85%;
 }
 
-.ring-time {
-  font-size: 64px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.ring-msg {
-  font-size: 26px;
+.motion-label {
+  font-size: 17px;
+  margin-bottom: 10px;
   color: var(--ink-dark);
-  margin-top: 8px;
-  font-weight: 700;
 }
 
+.motion-bar-wrap { width: 100%; }
+
+.motion-bar {
+  width: 100%;
+  height: 16px;
+  background: #eee;
+  border: 2px solid var(--ink-dark);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.motion-bar-fill {
+  height: 100%;
+  background: var(--point-sky);
+  border-radius: 6px;
+  transition: width 1s linear, background 0.3s;
+}
+
+.motion-bar-fill.urgent { background: #fc8181; }
+
+.motion-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--ink-light);
+  margin-top: 4px;
+}
+
+.urgent-text { color: #e53e3e; font-weight: 700; }
+
+.permission-btn {
+  font-family: var(--font-main);
+  font-size: 15px;
+  background: var(--point-orange);
+  border: 2px solid var(--ink-dark);
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: 2px 2px 0 var(--ink-dark);
+}
+
+/* 버튼 영역 */
 .ring-actions {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  gap: 0;
+  gap: 12px;
 }
 
 .ring-warning {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--ink-light);
+  text-align: center;
 }

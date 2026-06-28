@@ -1,37 +1,52 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import { useAlarmTimer } from '../hooks/useAlarmTimer'
 import './Home.css'
 
-export default function Home({ onNavigate }) {
+const fmt = (n) => String(n).padStart(2, '0')
+
+export default function Home({ onNavigate, onAlarmFired }) {
   const [hour, setHour] = useState(7)
   const [minute, setMinute] = useState(30)
   const [alarms, setAlarms] = useState([
     { id: 1, hour: 7, minute: 30, label: '출근' },
   ])
 
+  const handleAlarmTrigger = useCallback((alarm) => {
+    onAlarmFired(alarm)
+    onNavigate('ring')
+  }, [onAlarmFired, onNavigate])
+
+  const { now, getNextAlarm } = useAlarmTimer(alarms, handleAlarmTrigger)
+
   const addAlarm = () => {
-    const newAlarm = { id: Date.now(), hour, minute, label: '알람' }
-    setAlarms([...alarms, newAlarm])
+    setAlarms([...alarms, { id: Date.now(), hour, minute, label: '알람' }])
   }
 
-  const removeAlarm = (id) => {
-    setAlarms(alarms.filter(a => a.id !== id))
-  }
+  const removeAlarm = (id) => setAlarms(alarms.filter(a => a.id !== id))
 
-  const fmt = (n) => String(n).padStart(2, '0')
+  const nextInfo = getNextAlarm()
 
   return (
     <div className="screen home-screen">
+
       {/* 헤더 */}
       <div className="home-header">
         <span className="home-logo">웨이크업 콜 ☀️</span>
         <span className="home-points">🌟 320pt</span>
       </div>
 
-      {/* 시계 */}
+      {/* 현재 시각 + 다음 알람 */}
       <div className="clock-area">
         <div className="clock-circle">
-          <span className="clock-time">{fmt(hour)}:{fmt(minute)}</span>
-          <span className="clock-label">내일 기상 시간</span>
+          <span className="clock-time">
+            {fmt(now.getHours())}:{fmt(now.getMinutes())}
+          </span>
+          <span className="clock-seconds">{fmt(now.getSeconds())}</span>
+          {nextInfo && (
+            <span className="clock-label">
+              다음 알람까지 {nextInfo.minutesLeft}분
+            </span>
+          )}
         </div>
       </div>
 
@@ -52,7 +67,6 @@ export default function Home({ onNavigate }) {
         </div>
       </div>
 
-      {/* 알람 추가 버튼 */}
       <button className="btn" style={{ marginTop: 16 }} onClick={addAlarm}>
         + 알람 추가하기
       </button>
@@ -62,7 +76,7 @@ export default function Home({ onNavigate }) {
       {/* 알람 목록 */}
       <div className="alarm-list">
         {alarms.map((a) => (
-          <div key={a.id} className="alarm-item card" onClick={() => onNavigate('ring')}>
+          <div key={a.id} className="alarm-item card">
             <div className="alarm-item-left">
               <span className="alarm-emoji">😴</span>
               <div>
@@ -70,15 +84,22 @@ export default function Home({ onNavigate }) {
                 <div className="alarm-sublabel">{a.label}</div>
               </div>
             </div>
-            <button className="alarm-del" onClick={(e) => { e.stopPropagation(); removeAlarm(a.id) }}>✕</button>
+            <div className="alarm-item-right">
+              {/* 테스트용: 알람 즉시 발동 */}
+              <button
+                className="alarm-test-btn"
+                onClick={() => handleAlarmTrigger(a)}
+                title="테스트"
+              >
+                ▶
+              </button>
+              <button className="alarm-del" onClick={() => removeAlarm(a.id)}>✕</button>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* 하단 안내 */}
-      <div className="home-footer">
-        📞 못 일어나면 서버에서 전화드려요
-      </div>
+      <div className="home-footer">📞 못 일어나면 서버에서 전화드려요</div>
     </div>
   )
 }

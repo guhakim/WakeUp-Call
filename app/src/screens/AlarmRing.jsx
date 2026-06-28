@@ -1,47 +1,117 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { useAlarmSound } from '../hooks/useAlarmSound'
+import { useMotionDetect } from '../hooks/useMotionDetect'
 import './AlarmRing.css'
 
-export default function AlarmRing({ onNavigate }) {
-  const [shake, setShake] = useState(false)
+const fmt = (n) => String(n).padStart(2, '0')
+const fmtTime = (s) => `${fmt(Math.floor(s / 60))}:${fmt(s % 60)}`
 
+export default function AlarmRing({ alarm, onNavigate, onVoipTrigger }) {
+  const { start: soundStart, stop: soundStop } = useAlarmSound()
+
+  const {
+    noMotionSeconds,
+    timeUntilCall,
+    isCallImminent,
+    shouldTriggerCall,
+    motionPermission,
+    requestPermission,
+    confirmAwake,
+  } = useMotionDetect(true)
+
+  // 알람음 시작
   useEffect(() => {
-    const interval = setInterval(() => {
-      setShake(true)
-      setTimeout(() => setShake(false), 400)
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [])
+    soundStart()
+    return () => soundStop()
+  }, [soundStart, soundStop])
+
+  // VoIP 트리거
+  useEffect(() => {
+    if (shouldTriggerCall) {
+      soundStop()
+      onVoipTrigger?.()
+    }
+  }, [shouldTriggerCall, soundStop, onVoipTrigger])
+
+  const handleAwake = () => {
+    soundStop()
+    confirmAwake()
+    onNavigate('complete')
+  }
+
+  const handleSnooze = () => {
+    soundStop()
+    onNavigate('home')
+  }
 
   const now = new Date()
-  const fmt = (n) => String(n).padStart(2, '0')
+  const progress = Math.min((noMotionSeconds / 180) * 100, 100)
 
   return (
     <div className="screen ring-screen">
-      <div className={`ring-box ${shake ? 'shake' : ''}`}>
-        <div className="ring-emoji">ヽ(°〇°)ﾉ</div>
-        <div className="ring-time">{fmt(now.getHours())}:{fmt(now.getMinutes())}</div>
-        <div className="ring-msg">!! 일어나세요 !!</div>
+
+      {/* 알람 박스 */}
+      <div className={`ring-box ${isCallImminent ? 'urgent' : ''}`}>
+        <div className="ring-emoji">
+          {isCallImminent ? '😱' : 'ヽ(°〇°)ﾉ'}
+        </div>
+        <div className="ring-time">
+          {fmt(now.getHours())}:{fmt(now.getMinutes())}
+        </div>
+        <div className="ring-msg">
+          {isCallImminent ? '!! 전화 곧 옵니다 !!' : '!! 일어나세요 !!'}
+        </div>
       </div>
 
+      {/* 기상 감지 상태 */}
+      <div className="motion-status card">
+        <div className="motion-label">
+          {noMotionSeconds < 5
+            ? '📳 움직임 감지 중...'
+            : `😴 ${noMotionSeconds}초째 미기상 감지`}
+        </div>
+
+        {/* 프로그레스 바 */}
+        <div className="motion-bar-wrap">
+          <div className="motion-bar">
+            <div
+              className={`motion-bar-fill ${isCallImminent ? 'urgent' : ''}`}
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <div className="motion-bar-labels">
+            <span>0</span>
+            <span className={isCallImminent ? 'urgent-text' : ''}>
+              {isCallImminent
+                ? `📞 ${fmtTime(timeUntilCall)} 후 전화!`
+                : `전화까지 ${fmtTime(timeUntilCall)}`}
+            </span>
+            <span>3분</span>
+          </div>
+        </div>
+
+        {/* iOS 권한 요청 */}
+        {motionPermission === 'unknown' && (
+          <button className="permission-btn" onClick={requestPermission}>
+            자이로 센서 권한 허용하기
+          </button>
+        )}
+      </div>
+
+      {/* 버튼 */}
       <div className="ring-actions">
-        <button
-          className="btn green"
-          style={{ marginBottom: 14 }}
-          onClick={() => onNavigate('complete')}
-        >
+        <button className="btn green" onClick={handleAwake}>
           나 일어났어요! ✓
         </button>
-
-        <button
-          className="btn sky"
-          onClick={() => onNavigate('home')}
-        >
+        <button className="btn sky" onClick={handleSnooze}>
           5분만 더... 😴
         </button>
       </div>
 
       <div className="ring-warning">
-        5분 후에 전화 드릴게요 📞
+        {shouldTriggerCall
+          ? '📞 서버에서 전화 연결 중...'
+          : '움직임이 없으면 3분 후 전화드려요'}
       </div>
     </div>
   )
