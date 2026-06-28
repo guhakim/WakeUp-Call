@@ -19,6 +19,7 @@
 
 .home-points {
   font-size: 18px;
+  font-family: var(--font-main);
   background: var(--point-orange);
   border: 2px solid var(--ink-dark);
   border-radius: 20px;
@@ -26,6 +27,7 @@
   box-shadow: 2px 2px 0 var(--ink-dark);
   transform: rotate(0.5deg);
   display: inline-block;
+  cursor: pointer;
 }
 
 /* 시계 */

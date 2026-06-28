@@ -4,7 +4,7 @@ import './Home.css'
 
 const fmt = (n) => String(n).padStart(2, '0')
 
-export default function Home({ onNavigate, onAlarmFired }) {
+export default function Home({ onNavigate, onAlarmFired, rewards }) {
   const [hour, setHour] = useState(7)
   const [minute, setMinute] = useState(30)
   const [alarms, setAlarms] = useState([
@@ -32,7 +32,9 @@ export default function Home({ onNavigate, onAlarmFired }) {
       {/* 헤더 */}
       <div className="home-header">
         <span className="home-logo">웨이크업 콜 ☀️</span>
-        <span className="home-points">🌟 320pt</span>
+        <button className="home-points" onClick={() => onNavigate('rewards')}>
+          🌟 {rewards?.points ?? 0}pt
+        </button>
       </div>
 
       {/* 현재 시각 + 다음 알람 */}
