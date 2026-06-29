@@ -1,0 +1,80 @@
+name: WakeUp Call CI/CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # ── 백엔드 테스트 ──────────────────────────────────
+  test-server:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: wakeup_call
+          POSTGRES_USER: wakeup
+          POSTGRES_PASSWORD: wakeup_secret
+        ports: ["5432:5432"]
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: npm ci
+        working-directory: server
+      - run: npm run test:e2e
+        working-directory: server
+        env:
+          DATABASE_URL: postgresql://wakeup:wakeup_secret@localhost:5432/wakeup_call
+          REDIS_URL: redis://localhost:6379
+          TWILIO_ACCOUNT_SID: test
+          TWILIO_AUTH_TOKEN: test
+          TWILIO_PHONE_NUMBER: "+10000000000"
+
+  # ── 프론트엔드 빌드 ────────────────────────────────
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: npm ci && npm run build
+        working-directory: app
+
+  # ── AWS ECS 배포 (main 브랜치, 테스트 통과 후) ────
+  deploy-aws:
+    needs: [test-server, build-frontend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: AWS 인증
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2   # 서울 리전
+
+      - name: ECR 로그인
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Docker 이미지 빌드 및 푸시
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/wakeup-call-server:$IMAGE_TAG ./server
+          docker push $ECR_REGISTRY/wakeup-call-server:$IMAGE_TAG
+
+      - name: ECS 서비스 업데이트
+        run: |
+          aws ecs update-service \
+            --cluster wakeup-call-cluster \
+            --service wakeup-call-server \
+            --force-new-deployment
