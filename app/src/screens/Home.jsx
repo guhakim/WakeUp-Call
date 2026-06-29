@@ -116,9 +116,9 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
               </div>
               <span className="picker-sep">:</span>
               <div className="picker-col">
-                <button className="picker-btn" onClick={() => setMinute((minute + 5) % 60)}>▲</button>
+                <button className="picker-btn" onClick={() => setMinute((minute + 1) % 60)}>▲</button>
                 <span className="picker-val">{fmt(minute)}</span>
-                <button className="picker-btn" onClick={() => setMinute((minute - 5 + 60) % 60)}>▼</button>
+                <button className="picker-btn" onClick={() => setMinute((minute - 1 + 60) % 60)}>▼</button>
               </div>
             </div>
 
