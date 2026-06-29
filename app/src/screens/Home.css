@@ -218,19 +218,6 @@
   text-align: center;
 }
 
-.sound-test-btn {
-  align-self: center;
-  font-family: var(--font-main);
-  font-size: 18px;
-  background: white;
-  border: 2px dashed var(--ink-light);
-  border-radius: 20px;
-  padding: 10px 24px;
-  color: var(--ink-light);
-  cursor: pointer;
-  margin-top: 4px;
-}
-
 /* ── FAB ── */
 .fab {
   position: fixed;
