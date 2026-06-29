@@ -135,7 +135,6 @@ export default function MyRewards({ onNavigate, rewards }) {
       <div className="rewards-header">
         <button className="back-btn" onClick={() => onNavigate('home')}>← 뒤로</button>
         <span className="rewards-title">포인트 내역</span>
-        <button className="reset-btn" onClick={rewards.resetForDemo}>초기화</button>
       </div>
 
       {/* 총 포인트 */}
