@@ -48,7 +48,7 @@ body {
 
 .btn {
   font-family: var(--font-main);
-  font-size: 22px;
+  font-size: 26px;
   color: var(--ink-dark);
   background: var(--point-orange);
   border: 2.5px solid var(--ink-dark);

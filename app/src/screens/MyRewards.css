@@ -19,14 +19,14 @@
 
 .back-btn, .reset-btn {
   font-family: var(--font-main);
-  font-size: 16px;
+  font-size: 20px;
   background: none;
   border: none;
   color: var(--ink-light);
   cursor: pointer;
 }
 
-.rewards-title { font-size: 22px; font-weight: 700; }
+.rewards-title { font-size: 26px; font-weight: 700; }
 
 /* 포인트 히어로 */
 .points-hero {
@@ -35,9 +35,9 @@
   transform: rotate(-0.5deg);
 }
 
-.points-hero-label { font-size: 16px; color: var(--ink-light); }
-.points-hero-value { font-size: 52px; font-weight: 700; line-height: 1.1; }
-.points-hero-streak { font-size: 16px; margin: 4px 0 12px; }
+.points-hero-label  { font-size: 20px; color: var(--ink-light); }
+.points-hero-value  { font-size: 56px; font-weight: 700; line-height: 1.1; }
+.points-hero-streak { font-size: 20px; margin: 4px 0 12px; }
 
 .reward-bar-wrap { margin-top: 8px; }
 
@@ -60,7 +60,7 @@
 .reward-bar-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 15px;
   color: var(--ink-light);
   margin-top: 4px;
 }
@@ -68,7 +68,7 @@
 /* 섹션 타이틀 */
 .section-title {
   width: 85%;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
   margin: 20px auto 8px;
 }
@@ -89,20 +89,21 @@
   transform: rotate(0.3deg);
 }
 
-.gifticon-emoji { font-size: 30px; }
+.gifticon-emoji { font-size: 34px; }
 
 .gifticon-info { flex: 1; }
-.gifticon-name { font-size: 16px; font-weight: 700; }
-.gifticon-pts  { font-size: 14px; color: var(--ink-light); }
+.gifticon-name { font-size: 20px; font-weight: 700; }
+.gifticon-pts  { font-size: 18px; color: var(--ink-light); }
 
 .gifticon-btn {
   font-family: var(--font-main);
-  font-size: 16px;
+  font-size: 20px;
   border-radius: 8px;
-  padding: 6px 14px;
+  padding: 8px 16px;
   border: 2px solid var(--ink-dark);
   cursor: pointer;
   box-shadow: 2px 2px 0 var(--ink-dark);
+  white-space: nowrap;
 }
 
 .gifticon-btn.active {
@@ -131,17 +132,17 @@
   text-align: center;
   color: var(--ink-light);
   padding: 24px 0;
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .history-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 0;
+  padding: 16px 0;
   border-bottom: 1.5px dashed var(--ink-light);
 }
 
-.history-reason { font-size: 16px; }
-.history-date   { font-size: 12px; color: var(--ink-light); margin-top: 2px; }
-.history-amount { font-size: 18px; font-weight: 700; color: #3a9a6a; }
+.history-reason { font-size: 20px; }
+.history-date   { font-size: 15px; color: var(--ink-light); margin-top: 2px; }
+.history-amount { font-size: 22px; font-weight: 700; color: #3a9a6a; }

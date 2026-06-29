@@ -16,19 +16,19 @@
 }
 
 .home-logo {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 700;
   transform: rotate(-1deg);
   display: inline-block;
 }
 
 .home-points {
-  font-size: 17px;
+  font-size: 20px;
   font-family: var(--font-main);
   background: var(--point-orange);
   border: 2px solid var(--ink-dark);
   border-radius: 20px;
-  padding: 4px 14px;
+  padding: 6px 16px;
   box-shadow: 2px 2px 0 var(--ink-dark);
   cursor: pointer;
   white-space: nowrap;
@@ -37,7 +37,6 @@
 /* ── 메인 콘텐츠 ── */
 .home-content {
   flex: 1;
-  /* overflow-y만 scroll, 상하 padding으로 shadow 보호 */
   overflow-y: auto;
   overflow-x: hidden;
   padding: 12px 20px 160px;
@@ -50,13 +49,12 @@
 .clock-area {
   display: flex;
   justify-content: center;
-  /* shadow(5px) + rotation 클리핑 방지 */
   padding: 10px 10px 6px;
 }
 
 .clock-circle {
-  width: 164px;
-  height: 164px;
+  width: 180px;
+  height: 180px;
   border: 3px solid var(--ink-dark);
   border-radius: 50%;
   background: white;
@@ -70,24 +68,23 @@
 }
 
 .clock-time {
-  font-size: 42px;
+  font-size: 46px;
   font-weight: 700;
   line-height: 1;
 }
 
 .clock-seconds {
-  font-size: 18px;
+  font-size: 22px;
   color: var(--ink-light);
   margin-top: 0;
 }
 
 .clock-label {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--ink-light);
   margin-top: 4px;
-  max-width: 130px;
+  max-width: 150px;
   text-align: center;
-  /* 원 안에서 텍스트 잘림 방지 */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -106,13 +103,13 @@
   align-items: center;
 }
 
-.alarm-section-title { font-size: 20px; font-weight: 700; }
-.alarm-count         { font-size: 14px; color: var(--ink-light); }
+.alarm-section-title { font-size: 24px; font-weight: 700; }
+.alarm-count         { font-size: 18px; color: var(--ink-light); }
 
 .alarm-empty {
   text-align: center;
   color: var(--ink-light);
-  font-size: 16px;
+  font-size: 20px;
   padding: 32px 0;
   line-height: 1.8;
 }
@@ -133,19 +130,19 @@
 .alarm-item-left {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   flex: 1;
   min-width: 0;
 }
 
 .alarm-time {
-  font-size: 32px;
+  font-size: 40px;
   font-weight: 700;
   line-height: 1;
 }
 
 .alarm-sublabel {
-  font-size: 14px;
+  font-size: 18px;
   color: var(--ink-light);
 }
 
@@ -158,21 +155,20 @@
 
 .alarm-test-btn {
   font-family: var(--font-main);
-  font-size: 14px;
+  font-size: 18px;
   background: var(--point-orange);
   border: 2px solid var(--ink-dark);
   border-radius: 8px;
   padding: 8px 14px;
   cursor: pointer;
   box-shadow: 2px 2px 0 var(--ink-dark);
-  /* 핵심: 텍스트 줄바꿈 방지 */
   white-space: nowrap;
 }
 
 .alarm-del {
   background: none;
   border: none;
-  font-size: 22px;
+  font-size: 26px;
   color: var(--ink-light);
   cursor: pointer;
   font-family: var(--font-main);
@@ -181,7 +177,7 @@
 }
 
 .home-notice {
-  font-size: 13px;
+  font-size: 17px;
   color: var(--ink-light);
   text-align: center;
 }
@@ -193,7 +189,7 @@
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-main);
-  font-size: 18px;
+  font-size: 22px;
   background: var(--point-orange);
   border: 2.5px solid var(--ink-dark);
   border-radius: 30px;
@@ -246,7 +242,7 @@
 }
 
 .sheet-title {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 700;
   align-self: flex-start;
 }
@@ -268,7 +264,7 @@
 
 .picker-btn {
   font-family: var(--font-main);
-  font-size: 28px;
+  font-size: 32px;
   background: none;
   border: none;
   cursor: pointer;
@@ -278,22 +274,22 @@
 }
 
 .picker-val {
-  font-size: 56px;
+  font-size: 64px;
   font-weight: 700;
-  min-width: 90px;
+  min-width: 96px;
   text-align: center;
   line-height: 1.1;
 }
 
 .picker-sep {
-  font-size: 52px;
+  font-size: 60px;
   font-weight: 700;
   padding-bottom: 12px;
   color: var(--ink-dark);
 }
 
 .sheet-preview {
-  font-size: 16px;
+  font-size: 20px;
   color: var(--ink-light);
   background: white;
   border: 1.5px dashed var(--ink-light);
