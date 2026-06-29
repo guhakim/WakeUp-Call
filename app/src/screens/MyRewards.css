@@ -71,6 +71,19 @@
   font-size: 22px;
   font-weight: 700;
   margin: 20px auto 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 히스토리 아이콘 */
+.history-icon-wrap {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 기프티콘 */
@@ -137,11 +150,13 @@
 
 .history-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
   padding: 16px 0;
   border-bottom: 1.5px dashed var(--ink-light);
 }
+
+.history-left { flex: 1; min-width: 0; }
 
 .history-reason { font-size: 20px; }
 .history-date   { font-size: 15px; color: var(--ink-light); margin-top: 2px; }
