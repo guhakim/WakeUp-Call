@@ -34,7 +34,23 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
 
       {/* ── 상단 헤더 ── */}
       <div className="home-header">
-        <span className="home-logo">웨이크업 콜 ☀️</span>
+        <span className="home-logo">
+          웨이크업 콜
+          <svg className="logo-sun" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* 원 */}
+            <circle cx="20" cy="20" r="8.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"
+              strokeDasharray="1 0" />
+            {/* 햇살 8개 — 살짝 불규칙한 각도/길이로 손그림 느낌 */}
+            <line x1="20" y1="3"  x2="20.5" y2="8"   stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="20" y1="32" x2="19.5" y2="37"  stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="3"  y1="20" x2="8"    y2="20.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="32" y1="20" x2="37"   y2="19.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="7"  y1="7.5"  x2="11" y2="11.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="29" y1="29.5" x2="33" y2="33"   stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="32.5" y1="7.5" x2="28.5" y2="11.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="7.5"  y1="32"  x2="11.5" y2="28"   stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+          </svg>
+        </span>
         <button className="home-points" onClick={() => onNavigate('rewards')}>
           🌟 {rewards?.points ?? 0}pt
         </button>
