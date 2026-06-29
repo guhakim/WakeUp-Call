@@ -1,3 +1,4 @@
+import BottomNav from '../components/BottomNav'
 import './MyRewards.css'
 
 const GIFTICONS = [
@@ -70,6 +71,7 @@ export default function MyRewards({ onNavigate, rewards }) {
           ))
         )}
       </div>
+      <BottomNav current="rewards" onNavigate={onNavigate} />
     </div>
   )
 }
