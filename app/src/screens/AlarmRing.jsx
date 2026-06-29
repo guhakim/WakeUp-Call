@@ -45,7 +45,7 @@ export default function AlarmRing({ alarm, onNavigate, onVoipTrigger }) {
   }
 
   const now = new Date()
-  const progress = Math.min((noMotionSeconds / 180) * 100, 100)
+  const progress = Math.min((noMotionSeconds / 60) * 100, 100)
 
   return (
     <div className="screen ring-screen">
