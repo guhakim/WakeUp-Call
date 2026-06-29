@@ -3,6 +3,11 @@
   padding: 0;
   overflow-y: auto;
   gap: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.rewards-screen::-webkit-scrollbar {
+  display: none;
 }
 
 .rewards-header {

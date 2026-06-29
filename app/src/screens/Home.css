@@ -52,6 +52,12 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  /* 모바일 앱 — 스크롤바 숨김 */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.home-content::-webkit-scrollbar {
+  display: none;
 }
 
 /* ── 시계 ── */
