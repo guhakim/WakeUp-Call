@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useAlarmTimer } from '../hooks/useAlarmTimer'
+import { useAlarmSound } from '../hooks/useAlarmSound'
 import BottomNav from '../components/BottomNav'
 import './Home.css'
 
@@ -65,6 +66,16 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
   }
 
   const closeSheet = () => setMode(null)
+
+  const { start: soundStart, stop: soundStop } = useAlarmSound()
+  const [testing, setTesting] = useState(false)
+
+  const handleSoundTest = async () => {
+    if (testing) { soundStop(); setTesting(false); return }
+    setTesting(true)
+    await soundStart()
+    setTimeout(() => { soundStop(); setTesting(false) }, 4000)
+  }
 
   const nextInfo = getNextAlarm()
   const isEdit   = mode === 'edit'
@@ -139,6 +150,11 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
         </div>
 
         <div className="home-notice">📞 못 일어나면 서버에서 전화드려요</div>
+
+        {/* 소리 테스트 버튼 */}
+        <button className="sound-test-btn" onClick={handleSoundTest}>
+          {testing ? '⏹ 소리 중지' : '🔔 소리 테스트'}
+        </button>
       </div>
 
       {/* ── FAB ── */}
