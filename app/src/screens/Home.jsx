@@ -1,17 +1,31 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useAlarmTimer } from '../hooks/useAlarmTimer'
 import BottomNav from '../components/BottomNav'
 import './Home.css'
 
 const fmt = (n) => String(n).padStart(2, '0')
 
+const ALARMS_KEY = 'wakeup_alarms'
+const DEFAULT_ALARMS = [{ id: 1, hour: 7, minute: 30, label: '출근' }]
+
+const loadAlarms = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(ALARMS_KEY))
+    return Array.isArray(saved) && saved.length > 0 ? saved : DEFAULT_ALARMS
+  } catch {
+    return DEFAULT_ALARMS
+  }
+}
+
 export default function Home({ onNavigate, onAlarmFired, rewards }) {
-  const [alarms, setAlarms] = useState([
-    { id: 1, hour: 7, minute: 30, label: '출근' },
-  ])
+  const [alarms, setAlarms] = useState(loadAlarms)
   const [showPicker, setShowPicker] = useState(false)
   const [hour, setHour] = useState(7)
   const [minute, setMinute] = useState(30)
+
+  useEffect(() => {
+    localStorage.setItem(ALARMS_KEY, JSON.stringify(alarms))
+  }, [alarms])
 
   const handleAlarmTrigger = useCallback((alarm) => {
     onAlarmFired(alarm)
@@ -21,11 +35,11 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
   const { now, getNextAlarm } = useAlarmTimer(alarms, handleAlarmTrigger)
 
   const addAlarm = () => {
-    setAlarms([...alarms, { id: Date.now(), hour, minute, label: '알람' }])
+    setAlarms(prev => [...prev, { id: Date.now(), hour, minute, label: '알람' }])
     setShowPicker(false)
   }
 
-  const removeAlarm = (id) => setAlarms(alarms.filter(a => a.id !== id))
+  const removeAlarm = (id) => setAlarms(prev => prev.filter(a => a.id !== id))
 
   const nextInfo = getNextAlarm()
 
