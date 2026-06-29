@@ -48,7 +48,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 12px 20px 160px;
+  padding: 12px 20px 180px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -138,14 +138,16 @@
 .alarm-item {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;   /* 수정하기가 시간 아래에 오도록 하단 정렬 */
+  align-items: center;
   transform: rotate(-0.3deg);
+  min-height: 80px;
 }
 
 .alarm-item-left {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  justify-content: center;
+  gap: 6px;
   flex: 1;
   min-width: 0;
 }
@@ -165,8 +167,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 12px;
   flex-shrink: 0;
+  align-self: stretch;
+  padding: 4px 0;
 }
 
 .alarm-test-btn {
