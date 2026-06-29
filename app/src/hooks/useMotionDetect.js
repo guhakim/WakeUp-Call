@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
 const MOTION_THRESHOLD = 3       // 가속도 변화 임계값 (m/s²)
-const NO_MOTION_LIMIT = 3 * 60   // 미기상 판정 시간 (초) — PRD: 3~5분
+const NO_MOTION_LIMIT = 1 * 60   // 미기상 판정 시간 (초)
 const CHECK_INTERVAL = 1000
 
 export function useMotionDetect(active) {

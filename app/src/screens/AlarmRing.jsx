@@ -86,7 +86,7 @@ export default function AlarmRing({ alarm, onNavigate, onVoipTrigger }) {
                 ? `📞 ${fmtTime(timeUntilCall)} 후 전화!`
                 : `전화까지 ${fmtTime(timeUntilCall)}`}
             </span>
-            <span>3분</span>
+            <span>1분</span>
           </div>
         </div>
 
@@ -111,7 +111,7 @@ export default function AlarmRing({ alarm, onNavigate, onVoipTrigger }) {
       <div className="ring-warning">
         {shouldTriggerCall
           ? '📞 서버에서 전화 연결 중...'
-          : '움직임이 없으면 3분 후 전화드려요'}
+          : '움직임이 없으면 1분 후 전화드려요'}
       </div>
     </div>
   )
