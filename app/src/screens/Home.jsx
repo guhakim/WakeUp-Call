@@ -18,10 +18,12 @@ const loadAlarms = () => {
 }
 
 export default function Home({ onNavigate, onAlarmFired, rewards }) {
-  const [alarms, setAlarms] = useState(loadAlarms)
-  const [showPicker, setShowPicker] = useState(false)
-  const [hour, setHour] = useState(7)
-  const [minute, setMinute] = useState(30)
+  const [alarms, setAlarms]       = useState(loadAlarms)
+  // mode: null | 'add' | 'edit'
+  const [mode, setMode]           = useState(null)
+  const [editingId, setEditingId] = useState(null)
+  const [hour, setHour]           = useState(7)
+  const [minute, setMinute]       = useState(30)
 
   useEffect(() => {
     localStorage.setItem(ALARMS_KEY, JSON.stringify(alarms))
@@ -34,14 +36,38 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
 
   const { now, getNextAlarm } = useAlarmTimer(alarms, handleAlarmTrigger)
 
-  const addAlarm = () => {
-    setAlarms(prev => [...prev, { id: Date.now(), hour, minute, label: '알람' }])
-    setShowPicker(false)
+  /* ── 추가 ── */
+  const openAdd = () => {
+    setHour(7); setMinute(0); setEditingId(null); setMode('add')
   }
 
-  const removeAlarm = (id) => setAlarms(prev => prev.filter(a => a.id !== id))
+  const confirmAdd = () => {
+    setAlarms(prev => [...prev, { id: Date.now(), hour, minute, label: '알람' }])
+    setMode(null)
+  }
+
+  /* ── 수정 ── */
+  const openEdit = (a) => {
+    setHour(a.hour); setMinute(a.minute); setEditingId(a.id); setMode('edit')
+  }
+
+  const confirmEdit = () => {
+    setAlarms(prev => prev.map(a =>
+      a.id === editingId ? { ...a, hour, minute } : a
+    ))
+    setMode(null)
+  }
+
+  /* ── 삭제 ── */
+  const removeAlarm = (id, e) => {
+    e.stopPropagation()
+    setAlarms(prev => prev.filter(a => a.id !== id))
+  }
+
+  const closeSheet = () => setMode(null)
 
   const nextInfo = getNextAlarm()
+  const isEdit   = mode === 'edit'
 
   return (
     <div className="screen home-screen">
@@ -51,18 +77,15 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
         <span className="home-logo">
           웨이크업 콜
           <svg className="logo-sun" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* 원 */}
-            <circle cx="20" cy="20" r="8.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"
-              strokeDasharray="1 0" />
-            {/* 햇살 8개 — 살짝 불규칙한 각도/길이로 손그림 느낌 */}
-            <line x1="20" y1="3"  x2="20.5" y2="8"   stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
-            <line x1="20" y1="32" x2="19.5" y2="37"  stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
-            <line x1="3"  y1="20" x2="8"    y2="20.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
-            <line x1="32" y1="20" x2="37"   y2="19.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
-            <line x1="7"  y1="7.5"  x2="11" y2="11.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
-            <line x1="29" y1="29.5" x2="33" y2="33"   stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
-            <line x1="32.5" y1="7.5" x2="28.5" y2="11.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
-            <line x1="7.5"  y1="32"  x2="11.5" y2="28"   stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <circle cx="20" cy="20" r="8.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="20"   y1="3"    x2="20.5" y2="8"    stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="20"   y1="32"   x2="19.5" y2="37"   stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="3"    y1="20"   x2="8"    y2="20.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="32"   y1="20"   x2="37"   y2="19.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="7"    y1="7.5"  x2="11"   y2="11.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="29"   y1="29.5" x2="33"   y2="33"   stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="32.5" y1="7.5"  x2="28.5" y2="11.5" stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="7.5"  y1="32"   x2="11.5" y2="28"   stroke="#2D2D2D" strokeWidth="2.2" strokeLinecap="round"/>
           </svg>
         </span>
         <button className="home-points" onClick={() => onNavigate('rewards')}>
@@ -70,7 +93,7 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
         </button>
       </div>
 
-      {/* ── 스크롤 가능한 메인 콘텐츠 ── */}
+      {/* ── 메인 콘텐츠 ── */}
       <div className="home-content">
 
         {/* 현재 시각 */}
@@ -81,14 +104,12 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
             </span>
             <span className="clock-seconds">{fmt(now.getSeconds())}</span>
             <span className="clock-label">
-              {nextInfo
-                ? `다음 알람까지 ${nextInfo.minutesLeft}분`
-                : '알람 없음'}
+              {nextInfo ? `다음 알람까지 ${nextInfo.minutesLeft}분` : '알람 없음'}
             </span>
           </div>
         </div>
 
-        {/* 알람 목록 섹션 */}
+        {/* 알람 목록 */}
         <div className="alarm-section">
           <div className="alarm-section-header">
             <span className="alarm-section-title">내 알람</span>
@@ -103,13 +124,14 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
 
           <div className="alarm-list">
             {alarms.map((a) => (
-              <div key={a.id} className="alarm-item card">
+              <div key={a.id} className="alarm-item card" onClick={() => openEdit(a)}>
                 <div className="alarm-item-left">
                   <div className="alarm-time">{fmt(a.hour)}:{fmt(a.minute)}</div>
                   <div className="alarm-sublabel">{a.label}</div>
                 </div>
                 <div className="alarm-item-right">
-                  <button className="alarm-del" onClick={() => removeAlarm(a.id)}>✕</button>
+                  <span className="alarm-edit-hint">✏️ 탭해서 수정</span>
+                  <button className="alarm-del" onClick={(e) => removeAlarm(a.id, e)}>✕</button>
                 </div>
               </div>
             ))}
@@ -119,17 +141,19 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
         <div className="home-notice">📞 못 일어나면 서버에서 전화드려요</div>
       </div>
 
-      {/* ── 알람 추가 FAB ── */}
-      <button className="fab" onClick={() => setShowPicker(true)}>
+      {/* ── FAB ── */}
+      <button className="fab" onClick={openAdd}>
         + 알람 추가
       </button>
 
-      {/* ── 시간 선택 바텀시트 ── */}
-      {showPicker && (
-        <div className="sheet-overlay" onClick={() => setShowPicker(false)}>
+      {/* ── 바텀시트 (추가 / 수정 공용) ── */}
+      {mode && (
+        <div className="sheet-overlay" onClick={closeSheet}>
           <div className="sheet" onClick={e => e.stopPropagation()}>
             <div className="sheet-handle" />
-            <div className="sheet-title">알람 시간 설정</div>
+            <div className="sheet-title">
+              {isEdit ? '알람 수정' : '알람 추가'}
+            </div>
             <hr className="divider" style={{ width: '100%' }} />
 
             <div className="picker-row">
@@ -147,12 +171,21 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
             </div>
 
             <div className="sheet-preview">
-              {fmt(hour)}:{fmt(minute)} 알람이 추가됩니다
+              {fmt(hour)}:{fmt(minute)} 알람이 {isEdit ? '수정' : '추가'}됩니다
             </div>
 
-            <button className="btn" onClick={addAlarm}>
-              추가하기 ✓
+            <button className="btn" onClick={isEdit ? confirmEdit : confirmAdd}>
+              {isEdit ? '수정하기 ✓' : '추가하기 ✓'}
             </button>
+
+            {isEdit && (
+              <button className="btn sky sheet-del-btn" onClick={() => {
+                setAlarms(prev => prev.filter(a => a.id !== editingId))
+                setMode(null)
+              }}>
+                이 알람 삭제하기
+              </button>
+            )}
           </div>
         </div>
       )}
