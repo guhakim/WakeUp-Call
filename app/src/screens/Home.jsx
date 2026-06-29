@@ -79,12 +79,6 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
                   <div className="alarm-sublabel">{a.label}</div>
                 </div>
                 <div className="alarm-item-right">
-                  <button
-                    className="alarm-test-btn"
-                    onClick={() => handleAlarmTrigger(a)}
-                  >
-                    ▶ 테스트
-                  </button>
                   <button className="alarm-del" onClick={() => removeAlarm(a.id)}>✕</button>
                 </div>
               </div>
