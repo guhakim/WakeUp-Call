@@ -132,7 +132,7 @@
 .alarm-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;   /* 수정하기가 시간 아래에 오도록 하단 정렬 */
   transform: rotate(-0.3deg);
 }
 
@@ -157,8 +157,9 @@
 
 .alarm-item-right {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
   flex-shrink: 0;
 }
 
@@ -175,9 +176,10 @@
 }
 
 .alarm-edit-hint {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--ink-light);
   white-space: nowrap;
+  transform: rotate(1deg);  /* 손글씨 느낌으로 살짝 기울임 */
 }
 
 .sheet-del-btn {

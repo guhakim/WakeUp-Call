@@ -130,8 +130,8 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
                   <div className="alarm-sublabel">{a.label}</div>
                 </div>
                 <div className="alarm-item-right">
-                  <span className="alarm-edit-hint">✏️ 탭해서 수정</span>
                   <button className="alarm-del" onClick={(e) => removeAlarm(a.id, e)}>✕</button>
+                  <span className="alarm-edit-hint">수정하기</span>
                 </div>
               </div>
             ))}
