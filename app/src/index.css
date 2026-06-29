@@ -15,21 +15,29 @@
   --font-main:    'Gaegu', cursive;
 }
 
-html, body, #root {
+/* 모바일 웹앱 표준: body를 fixed로 고정해 URL bar 변동 무관하게 안정적인 뷰포트 확보 */
+html {
   height: 100%;
-  width: 100%;
-  overflow: hidden;
 }
 
 body {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
   background: var(--bg-paper);
   font-family: var(--font-main);
   color: var(--ink-dark);
 }
 
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 .screen {
   width: 100%;
-  height: 100dvh;
+  height: 100%;          /* body가 fixed이므로 100%가 정확한 뷰포트 높이 */
   background: var(--bg-paper);
   display: flex;
   flex-direction: column;
