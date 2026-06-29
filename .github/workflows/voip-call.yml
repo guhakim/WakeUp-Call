@@ -1,0 +1,33 @@
+name: WakeUp VoIP 전화 발신
+
+on:
+  workflow_dispatch:
+    inputs:
+      phone:
+        description: '수신 번호 (E.164 형식: +8210XXXXXXXX)'
+        required: true
+        type: string
+
+jobs:
+  call:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Twilio 전화 발신
+        run: |
+          HTTP_CODE=$(curl -s -o /tmp/twilio_res.json -w "%{http_code}" \
+            -X POST \
+            "https://api.twilio.com/2010-04-01/Accounts/${{ secrets.TWILIO_ACCOUNT_SID }}/Calls.json" \
+            -u "${{ secrets.TWILIO_ACCOUNT_SID }}:${{ secrets.TWILIO_AUTH_TOKEN }}" \
+            --data-urlencode "To=${{ inputs.phone }}" \
+            --data-urlencode "From=${{ secrets.TWILIO_FROM_NUMBER }}" \
+            --data-urlencode "Twiml=<Response><Say language=\"ko-KR\" voice=\"Polly.Seoyeon\">알람이 울리고 있습니다! 지금 바로 일어나세요! WakeUp Call 서비스입니다.</Say><Pause length=\"2\"/><Say language=\"ko-KR\" voice=\"Polly.Seoyeon\">일어나세요! 일어나세요! 일어나세요!</Say></Response>")
+
+          cat /tmp/twilio_res.json
+          echo "HTTP Status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" != "201" ]; then
+            echo "전화 발신 실패 (HTTP $HTTP_CODE)"
+            exit 1
+          fi
+
+          echo "✅ 전화 발신 성공"
