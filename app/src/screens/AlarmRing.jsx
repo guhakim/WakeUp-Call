@@ -19,11 +19,11 @@ export default function AlarmRing({ alarm, onNavigate, onVoipTrigger }) {
     confirmAwake,
   } = useMotionDetect(true)
 
-  // 알람음 시작
+  // 알람음 + 진동 시작
   useEffect(() => {
-    soundStart()
+    soundStart()          // async — 내부에서 ctx.resume() await 처리
     return () => soundStop()
-  }, [soundStart, soundStop])
+  }, []) // eslint-disable-line
 
   // VoIP 트리거
   useEffect(() => {
