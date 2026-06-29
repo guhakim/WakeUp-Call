@@ -89,7 +89,7 @@
   transform: rotate(0.3deg);
 }
 
-.gifticon-emoji { font-size: 34px; }
+.gifticon-icon { width: 44px; height: 44px; flex-shrink: 0; }
 
 .gifticon-info { flex: 1; }
 .gifticon-name { font-size: 20px; font-weight: 700; }
