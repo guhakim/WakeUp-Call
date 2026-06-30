@@ -24,6 +24,7 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
   const [editingId, setEditingId] = useState(null)
   const [hour, setHour]           = useState(7)
   const [minute, setMinute]       = useState(30)
+  const [memo, setMemo]           = useState('')
 
   useEffect(() => {
     localStorage.setItem(ALARMS_KEY, JSON.stringify(alarms))
@@ -38,22 +39,22 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
 
   /* ── 추가 ── */
   const openAdd = () => {
-    setHour(7); setMinute(0); setEditingId(null); setMode('add')
+    setHour(7); setMinute(0); setMemo(''); setEditingId(null); setMode('add')
   }
 
   const confirmAdd = () => {
-    setAlarms(prev => [...prev, { id: Date.now(), hour, minute, label: '알람' }])
+    setAlarms(prev => [...prev, { id: Date.now(), hour, minute, memo }])
     setMode(null)
   }
 
   /* ── 수정 ── */
   const openEdit = (a) => {
-    setHour(a.hour); setMinute(a.minute); setEditingId(a.id); setMode('edit')
+    setHour(a.hour); setMinute(a.minute); setMemo(a.memo ?? ''); setEditingId(a.id); setMode('edit')
   }
 
   const confirmEdit = () => {
     setAlarms(prev => prev.map(a =>
-      a.id === editingId ? { ...a, hour, minute } : a
+      a.id === editingId ? { ...a, hour, minute, memo } : a
     ))
     setMode(null)
   }
@@ -127,7 +128,7 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
               <div key={a.id} className="alarm-item card" onClick={() => openEdit(a)}>
                 <div className="alarm-item-left">
                   <div className="alarm-time">{fmt(a.hour)}:{fmt(a.minute)}</div>
-                  <div className="alarm-sublabel">{a.label}</div>
+                  {a.memo ? <div className="alarm-sublabel">{a.memo}</div> : null}
                 </div>
                 <div className="alarm-item-right">
                   <button className="alarm-del" onClick={(e) => removeAlarm(a.id, e)}>✕</button>
@@ -170,8 +171,17 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
               </div>
             </div>
 
+            <input
+              className="memo-input"
+              type="text"
+              placeholder="메모 (예: 25일 오전 미팅 중요 !!)"
+              value={memo}
+              onChange={e => setMemo(e.target.value)}
+              maxLength={30}
+            />
+
             <div className="sheet-preview">
-              {fmt(hour)}:{fmt(minute)} 알람이 {isEdit ? '수정' : '추가'}됩니다
+              {fmt(hour)}:{fmt(minute)} {memo ? `· ${memo}` : '알람이 ' + (isEdit ? '수정' : '추가') + '됩니다'}
             </div>
 
             <button className="btn" onClick={isEdit ? confirmEdit : confirmAdd}>

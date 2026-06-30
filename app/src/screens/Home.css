@@ -324,6 +324,26 @@
   color: var(--ink-dark);
 }
 
+.memo-input {
+  width: 100%;
+  font-family: var(--font-main);
+  font-size: 20px;
+  border: 2px dashed var(--ink-light);
+  border-radius: 12px;
+  padding: 12px 16px;
+  background: white;
+  color: var(--ink-dark);
+  outline: none;
+  box-sizing: border-box;
+}
+.memo-input:focus {
+  border-color: var(--point-orange);
+  border-style: solid;
+}
+.memo-input::placeholder {
+  color: #bbb;
+}
+
 .sheet-preview {
   font-size: 20px;
   color: var(--ink-light);
