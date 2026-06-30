@@ -7,7 +7,7 @@ const fmt = (n) => String(n).padStart(2, '0')
 const fmtTime = (s) => `${fmt(Math.floor(s / 60))}:${fmt(s % 60)}`
 
 export default function AlarmRing({ alarm: _alarm, onNavigate, onVoipTrigger }) {
-  const { start: soundStart, stop: soundStop } = useAlarmSound()
+  const { start: soundStart, stop: soundStop, tryPlay } = useAlarmSound()
 
   const {
     noMotionSeconds,
@@ -48,7 +48,7 @@ export default function AlarmRing({ alarm: _alarm, onNavigate, onVoipTrigger }) 
   const progress = Math.min((noMotionSeconds / 60) * 100, 100)
 
   return (
-    <div className="screen ring-screen" onTouchStart={soundStart} onClick={soundStart}>
+    <div className="screen ring-screen" onTouchStart={tryPlay} onClick={tryPlay}>
 
       {/* 알람 박스 */}
       <div className={`ring-box ${isCallImminent ? 'urgent' : ''}`}>
