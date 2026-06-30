@@ -13,22 +13,21 @@ export function useAlarmTimer(alarms, onAlarmTrigger) {
 
   // 알람 체크
   useEffect(() => {
+    const nowH     = now.getHours()
+    const nowM     = now.getMinutes()
+    const nowS     = now.getSeconds()
+    const nowTotal = nowH * 60 + nowM
+
     for (const alarm of alarms) {
       const key = `${alarm.id}-${now.toDateString()}`
       if (firedRef.current.has(key)) continue
 
-      const alarmH = alarm.hour
-      const alarmM = alarm.minute
-      const nowH = now.getHours()
-      const nowM = now.getMinutes()
-      const nowS = now.getSeconds()
+      const alarmTotal = alarm.hour * 60 + alarm.minute
+      const diff = nowTotal - alarmTotal  // 양수 = 알람 시간 경과 (분 단위)
 
-      // 알람 시간 정각 ±30초 이내
-      const alarmTotal = alarmH * 60 + alarmM
-      const nowTotal = nowH * 60 + nowM
-      const diff = nowTotal - alarmTotal
-
-      if (diff === 0 && nowS < 30) {
+      // diff === 0 : 해당 분 전체 (초 0~59) — 핵심 발동 조건
+      // diff === 1 && nowS < 30 : 1분 경과했지만 30초 이내 — 백그라운드 스로틀링 대비
+      if (diff === 0 || (diff === 1 && nowS < 30)) {
         firedRef.current.add(key)
         onAlarmTrigger(alarm)
         break
