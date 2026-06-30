@@ -1,67 +1,75 @@
 import { useRef, useCallback } from 'react'
 
-/* ── 비프음 재생 (컨텍스트가 running일 때만) ── */
-function playBeep(ctx) {
-  if (!ctx || ctx.state !== 'running') return
-  const t = ctx.currentTime
-  const gain = ctx.createGain()
-  gain.connect(ctx.destination)
-  gain.gain.setValueAtTime(0, t)
-  gain.gain.linearRampToValueAtTime(1.0, t + 0.02)
-  gain.gain.setValueAtTime(1.0, t + 0.42)
-  gain.gain.linearRampToValueAtTime(0, t + 0.48)
+/* ── WAV 비프음 생성 (AudioContext 없이 — iOS 최대 호환) ── */
+function buildBeepWAV() {
+  const rate       = 22050
+  const duration   = 0.55
+  const n          = Math.floor(rate * duration)
+  const buf        = new ArrayBuffer(44 + n * 2)
+  const v          = new DataView(buf)
+  const str        = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)) }
 
-  [[0, 0.48], [0.6, 1.08]].forEach(([s, e]) => {
-    const osc = ctx.createOscillator()
-    osc.type = 'square'
-    osc.frequency.setValueAtTime(880, t + s)
-    osc.frequency.linearRampToValueAtTime(1200, t + (s + e) / 2)
-    osc.frequency.linearRampToValueAtTime(880, t + e)
-    osc.connect(gain)
-    osc.start(t + s)
-    osc.stop(t + e + 0.01)
-  })
+  str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true)
+  str(8, 'WAVE'); str(12, 'fmt ')
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true)  // PCM
+  v.setUint16(22, 1, true)                              // mono
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true)
+  v.setUint16(32, 2, true); v.setUint16(34, 16, true)
+  str(36, 'data'); v.setUint32(40, n * 2, true)
+
+  // 두 톤 square wave: 0~0.22s → 880Hz / 0.3~0.52s → 1100Hz
+  const tones = [[0, 0.22, 880], [0.3, 0.52, 1100]]
+  for (let i = 0; i < n; i++) {
+    const t = i / rate
+    let val = 0
+    for (const [s, e, hz] of tones) {
+      if (t >= s && t < e) {
+        const phase = (t * hz) % 1
+        const raw   = phase < 0.5 ? 22000 : -22000
+        const rel   = (t - s) / (e - s)
+        const env   = rel < 0.05 ? rel / 0.05 : rel > 0.93 ? (1 - rel) / 0.07 : 1
+        val = Math.round(raw * env)
+        break
+      }
+    }
+    v.setInt16(44 + i * 2, val, true)
+  }
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }))
 }
 
+/* 모듈 단위로 한 번만 생성 */
+let _url = null
+const beepURL = () => { if (!_url) _url = buildBeepWAV(); return _url }
+
+/* ── Hook ── */
 export function useAlarmSound() {
-  const ctxRef      = useRef(null)
+  const audioRef    = useRef(null)
   const intervalRef = useRef(null)
   const vibrateRef  = useRef(null)
 
-  /* AudioContext 생성 — 사용자 제스처 안에서 호출 시 iOS도 running 상태 */
-  function ensureCtx() {
-    if (!ctxRef.current) {
-      ctxRef.current = new (window.AudioContext || window.webkitAudioContext)()
-    }
-    return ctxRef.current
+  /* Audio 요소 — 사용자 제스처로 play() 시 iOS 허용됨 */
+  function audio() {
+    if (!audioRef.current) audioRef.current = new Audio(beepURL())
+    return audioRef.current
   }
 
-  /* 터치/클릭 핸들러에서 직접 호출 — resume + 즉시 재생 */
+  /* 비프 한 번 — 화면 터치 핸들러에서 직접 호출 */
   const tryPlay = useCallback(() => {
-    const ctx = ensureCtx()
-    // resume은 사용자 제스처 컨텍스트 안에서 동기 호출 → iOS 허용
-    ctx.resume().then(() => {
-      playBeep(ctx)
-    }).catch(() => {})
-    // resume 전이라도 시도 (Android / 이미 running인 경우)
-    playBeep(ctx)
+    const a = audio()
+    a.currentTime = 0
+    a.play().catch(() => {})
   }, [])
 
-  /* 알람 시작 — useEffect에서 한 번 호출 */
+  /* 알람 시작 */
   const start = useCallback(() => {
-    tryPlay()
-
-    // 1.2초마다 재시도 (컨텍스트가 나중에 활성화돼도 울림)
+    tryPlay()                                        // 즉시 1회
     if (!intervalRef.current) {
-      intervalRef.current = setInterval(tryPlay, 1200)
+      intervalRef.current = setInterval(tryPlay, 1200)  // 1.2초마다 반복
     }
-
-    // 진동 (Android)
     if (navigator.vibrate && !vibrateRef.current) {
       navigator.vibrate([500, 150, 500, 150, 500])
       vibrateRef.current = setInterval(
-        () => navigator.vibrate([500, 150, 500, 150, 500]),
-        1400
+        () => navigator.vibrate([500, 150, 500, 150, 500]), 1400
       )
     }
   }, [tryPlay])
@@ -72,9 +80,8 @@ export function useAlarmSound() {
     clearInterval(vibrateRef.current)
     intervalRef.current = null
     vibrateRef.current  = null
+    audioRef.current?.pause()
     if (navigator.vibrate) navigator.vibrate(0)
-    // 컨텍스트 일시정지 (배터리 절약)
-    ctxRef.current?.suspend().catch(() => {})
   }, [])
 
   return { start, stop, tryPlay }
