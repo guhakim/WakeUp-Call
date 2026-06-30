@@ -1,19 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import './WakeComplete.css'
 
 const EARN_AMOUNT = 10
 
 export default function WakeComplete({ onNavigate, rewards }) {
-  const [showBonus, setShowBonus] = useState(false)
   const [counted, setCounted] = useState(false)
 
   useEffect(() => {
     if (counted) return
     setCounted(true)
     rewards.addPoints(EARN_AMOUNT, '⏰ 정시 기상')
-    if (rewards.streak > 0 && [3, 7, 30].includes(rewards.streak + 1)) {
-      setTimeout(() => setShowBonus(true), 600)
-    }
   }, []) // eslint-disable-line
 
   const streakEmoji = rewards.streak >= 30 ? '🏆' : rewards.streak >= 7 ? '🔥' : rewards.streak >= 3 ? '✨' : '😊'
@@ -54,13 +50,6 @@ export default function WakeComplete({ onNavigate, rewards }) {
           </span>
         </div>
       </div>
-
-      {/* 연속 보너스 팝업 */}
-      {showBonus && (
-        <div className="bonus-popup card">
-          🎉 {rewards.streak}일 연속 보너스 +{rewards.streak === 3 ? 10 : 30}pt 적립!
-        </div>
-      )}
 
       {/* 광고 영역 */}
       <div className="ad-area">
