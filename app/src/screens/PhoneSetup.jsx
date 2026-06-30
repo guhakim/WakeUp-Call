@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './PhoneSetup.css'
 
-export default function PhoneSetup({ onDone }) {
+export default function PhoneSetup({ onDone, onSkip }) {
   const [phone, setPhone] = useState('')
   const [error, setError] = useState('')
 
@@ -47,6 +47,10 @@ export default function PhoneSetup({ onDone }) {
 
       <button className="btn" onClick={handleSubmit}>
         시작하기 →
+      </button>
+
+      <button className="setup-skip" onClick={onSkip}>
+        나중에 설정하기
       </button>
     </div>
   )

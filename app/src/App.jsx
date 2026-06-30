@@ -61,7 +61,7 @@ export default function App() {
   return (
     <>
       {screen === 'setup' && (
-        <PhoneSetup onDone={handlePhoneSetupDone} />
+        <PhoneSetup onDone={handlePhoneSetupDone} onSkip={() => setScreen('home')} />
       )}
       {screen === 'home' && (
         <Home onNavigate={setScreen} onAlarmFired={handleAlarmFired} rewards={rewards} />
