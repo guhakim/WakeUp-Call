@@ -6,7 +6,7 @@ import './AlarmRing.css'
 const fmt = (n) => String(n).padStart(2, '0')
 const fmtTime = (s) => `${fmt(Math.floor(s / 60))}:${fmt(s % 60)}`
 
-export default function AlarmRing({ alarm, onNavigate, onVoipTrigger }) {
+export default function AlarmRing({ alarm: _alarm, onNavigate, onVoipTrigger }) {
   const { start: soundStart, stop: soundStop } = useAlarmSound()
 
   const {

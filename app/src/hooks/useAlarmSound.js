@@ -13,7 +13,7 @@ function getCtx() {
 async function ensureRunning() {
   const ctx = getCtx()
   if (ctx.state !== 'running') {
-    try { await ctx.resume() } catch (_) {}
+    try { await ctx.resume() } catch {}
   }
   return ctx
 }
@@ -30,7 +30,7 @@ function unlockAudio() {
     src.buffer = buf
     src.connect(ctx.destination)
     src.start(0)
-  } catch (_) {}
+  } catch {}
 }
 
 if (typeof window !== 'undefined') {
