@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
+/* 모듈 레벨 — 컴포넌트 재마운트 후에도 유지 (홈 복귀 시 재발동 방지) */
+const firedSet = new Set()
+
 export function useAlarmTimer(alarms, onAlarmTrigger) {
   const [now, setNow] = useState(new Date())
-  const firedRef = useRef(new Set())
   const tickRef = useRef(null)
 
   // 1초마다 현재 시간 갱신
@@ -20,7 +22,7 @@ export function useAlarmTimer(alarms, onAlarmTrigger) {
 
     for (const alarm of alarms) {
       const key = `${alarm.id}-${now.toDateString()}`
-      if (firedRef.current.has(key)) continue
+      if (firedSet.has(key)) continue
 
       const alarmTotal = alarm.hour * 60 + alarm.minute
       const diff = nowTotal - alarmTotal  // 양수 = 알람 시간 경과 (분 단위)
@@ -28,7 +30,7 @@ export function useAlarmTimer(alarms, onAlarmTrigger) {
       // diff === 0 : 해당 분 전체 (초 0~59) — 핵심 발동 조건
       // diff === 1 && nowS < 30 : 1분 경과했지만 30초 이내 — 백그라운드 스로틀링 대비
       if (diff === 0 || (diff === 1 && nowS < 30)) {
-        firedRef.current.add(key)
+        firedSet.add(key)
         onAlarmTrigger(alarm)
         break
       }
