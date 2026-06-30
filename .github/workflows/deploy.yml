@@ -44,10 +44,6 @@ jobs:
         with: { node-version: '20' }
       - run: npm ci && npm run build
         working-directory: app
-        env:
-          # Actions (Read & write) 권한만 가진 Fine-grained PAT
-          # → voip-call.yml workflow_dispatch 트리거에 사용
-          VITE_GITHUB_TOKEN: ${{ secrets.VITE_GITHUB_TOKEN }}
 
   # ── AWS ECS 배포 (main 브랜치, 테스트 통과 후) ────
   deploy-aws:

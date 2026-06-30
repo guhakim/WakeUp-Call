@@ -47,15 +47,9 @@ export default function App() {
 
   // VoIP 트리거
   const handleVoipTrigger = useCallback(async () => {
-    const result = await alarmApi.triggerVoip({ phoneNumber })
-    if (result.success) {
-      console.log('[VoIP] 전화 발신 요청 완료')
-    } else if (result.noToken) {
-      alert('📞 GitHub Token이 설정되지 않았습니다.\nVITE_GITHUB_TOKEN 환경변수를 설정해주세요.')
-    } else if (result.noPhone) {
-      alert('📞 전화번호가 저장되지 않았습니다.')
-    } else {
-      alert('📞 전화 발신 요청 실패\n잠시 후 다시 시도됩니다.')
+    const result = await alarmApi.triggerVoip({ phoneNumber, userName: USER_ID })
+    if (!result.success && result.offline) {
+      console.log('[VoIP] 서버 미연결 — 로컬 모드')
     }
   }, [phoneNumber])
 
