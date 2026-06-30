@@ -4,11 +4,7 @@ import './WakeComplete.css'
 const EARN_AMOUNT = 10
 
 export default function WakeComplete({ onNavigate, rewards }) {
-  const [counted, setCounted] = useState(false)
-
   useEffect(() => {
-    if (counted) return
-    setCounted(true)
     rewards.addPoints(EARN_AMOUNT, '⏰ 정시 기상')
   }, []) // eslint-disable-line
 
