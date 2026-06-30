@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useAlarmTimer } from '../hooks/useAlarmTimer'
+import { addToCalendar } from '../utils/icsGenerator'
 import BottomNav from '../components/BottomNav'
 import './Home.css'
 
@@ -129,6 +130,12 @@ export default function Home({ onNavigate, onAlarmFired, rewards }) {
                 <div className="alarm-item-left">
                   <div className="alarm-time">{fmt(a.hour)}:{fmt(a.minute)}</div>
                   {a.memo ? <div className="alarm-sublabel">{a.memo}</div> : null}
+                  <button
+                    className="alarm-cal-btn"
+                    onClick={(e) => { e.stopPropagation(); addToCalendar(a) }}
+                  >
+                    + 캘린더 추가
+                  </button>
                 </div>
                 <div className="alarm-item-right">
                   <button className="alarm-del" onClick={(e) => removeAlarm(a.id, e)}>✕</button>

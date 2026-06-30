@@ -186,6 +186,20 @@
   white-space: nowrap;
 }
 
+.alarm-cal-btn {
+  font-family: var(--font-main);
+  font-size: 15px;
+  color: var(--point-orange);
+  background: none;
+  border: 1.5px solid var(--point-orange);
+  border-radius: 20px;
+  padding: 3px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
 .alarm-edit-hint {
   font-size: 16px;
   color: var(--ink-light);
