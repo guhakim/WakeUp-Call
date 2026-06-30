@@ -48,7 +48,7 @@ export default function AlarmRing({ alarm: _alarm, onNavigate, onVoipTrigger }) 
   const progress = Math.min((noMotionSeconds / 60) * 100, 100)
 
   return (
-    <div className="screen ring-screen">
+    <div className="screen ring-screen" onTouchStart={soundStart} onClick={soundStart}>
 
       {/* 알람 박스 */}
       <div className={`ring-box ${isCallImminent ? 'urgent' : ''}`}>

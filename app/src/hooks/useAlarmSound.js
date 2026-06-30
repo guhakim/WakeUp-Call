@@ -1,96 +1,92 @@
 import { useRef, useCallback } from 'react'
 
-let sharedCtx = null
+let _ctx = null
 
 function getCtx() {
-  if (!sharedCtx) {
-    sharedCtx = new (window.AudioContext || window.webkitAudioContext)()
+  if (!_ctx) {
+    _ctx = new (window.AudioContext || window.webkitAudioContext)()
   }
-  return sharedCtx
+  return _ctx
 }
 
-/* AudioContext resume — 비동기 처리 */
-async function ensureRunning() {
-  const ctx = getCtx()
-  if (ctx.state !== 'running') {
-    try { await ctx.resume() } catch {}
-  }
-  return ctx
-}
+/* 컨텍스트 unlock 후 즉시 실행할 콜백 (iOS 대응) */
+let _pendingPlay = null
 
-/* 사용자 상호작용마다 unlock 시도 (once 제거 — 백그라운드 복귀 대응) */
-function unlockAudio() {
-  const ctx = getCtx()
-  if (ctx.state === 'suspended') {
-    ctx.resume().catch(() => {})
-  }
-  try {
-    const buf = ctx.createBuffer(1, 1, 22050)
-    const src = ctx.createBufferSource()
-    src.buffer = buf
-    src.connect(ctx.destination)
-    src.start(0)
-  } catch {}
+function tryUnlock() {
+  const c = getCtx()
+  c.resume()
+    .then(() => {
+      if (c.state === 'running' && _pendingPlay) {
+        _pendingPlay()         // 터치 즉시 소리 재생
+        _pendingPlay = null
+      }
+    })
+    .catch(() => {})
 }
 
 if (typeof window !== 'undefined') {
-  ['touchstart', 'touchend', 'click', 'keydown', 'pointerdown'].forEach((e) =>
-    window.addEventListener(e, unlockAudio, { passive: true })
+  ['touchstart', 'pointerdown', 'click'].forEach((e) =>
+    window.addEventListener(e, tryUnlock, { passive: true })
   )
 }
 
-/* 실제 삐-삐 소리 재생 */
-function playTones(ctx) {
-  const t = ctx.currentTime
-  const gain = ctx.createGain()
-  gain.connect(ctx.destination)
+/* 삐-삐 두 음 재생 */
+function playTones(c) {
+  if (c.state !== 'running') return   // suspended면 건너뜀 — interval이 재시도
+  const t = c.currentTime
+  const gain = c.createGain()
+  gain.connect(c.destination)
 
-  [[0, 0.18], [0.3, 0.48]].forEach(([s, e]) => {
-    const osc = ctx.createOscillator()
+  [[0, 0.2], [0.32, 0.52]].forEach(([s, e]) => {
+    const osc = c.createOscillator()
     osc.type = 'square'
-    osc.frequency.setValueAtTime(1000, t + s)
-    osc.frequency.linearRampToValueAtTime(1350, t + (s + e) / 2)
-    osc.frequency.linearRampToValueAtTime(1000, t + e)
+    osc.frequency.setValueAtTime(880, t + s)
+    osc.frequency.linearRampToValueAtTime(1200, t + (s + e) / 2)
+    osc.frequency.linearRampToValueAtTime(880, t + e)
     osc.connect(gain)
     osc.start(t + s)
     osc.stop(t + e + 0.01)
   })
 
   gain.gain.setValueAtTime(0, t)
-  gain.gain.linearRampToValueAtTime(1.0, t + 0.02)
-  gain.gain.setValueAtTime(1.0, t + 0.46)
-  gain.gain.linearRampToValueAtTime(0, t + 0.52)
+  gain.gain.linearRampToValueAtTime(1.0, t + 0.03)
+  gain.gain.setValueAtTime(1.0, t + 0.5)
+  gain.gain.linearRampToValueAtTime(0, t + 0.56)
 }
 
 export function useAlarmSound() {
   const intervalRef = useRef(null)
   const vibrateRef  = useRef(null)
 
-  const beep = useCallback(async () => {
-    const ctx = await ensureRunning()
-    playTones(ctx)
-  }, [])
+  const start = useCallback(() => {
+    if (intervalRef.current) return   // 이미 재생 중 — 중복 방지
 
-  const start = useCallback(async () => {
-    /* 1) AudioContext 확실히 깨우기 */
-    const ctx = await ensureRunning()
+    const c = getCtx()
+    c.resume().catch(() => {})        // 비동기 — 결과 무관하게 진행
 
-    /* 2) 첫 번째 비프 즉시 재생 */
-    playTones(ctx)
+    if (c.state === 'running') {
+      // 컨텍스트가 이미 활성 → 즉시 소리 재생
+      playTones(c)
+    } else {
+      // suspended → 다음 사용자 터치 때 즉시 재생하도록 등록
+      _pendingPlay = () => playTones(getCtx())
+    }
 
-    /* 3) 1.2초마다 반복 */
-    intervalRef.current = setInterval(beep, 1200)
+    // 1.2초마다 재시도 (컨텍스트가 나중에 활성화돼도 소리 남)
+    intervalRef.current = setInterval(() => playTones(getCtx()), 1200)
 
-    /* 4) 진동 — Android 지원, iOS 미지원 */
+    // 진동 (Android)
     if (navigator.vibrate) {
       navigator.vibrate([500, 150, 500, 150, 500])
-      vibrateRef.current = setInterval(() => {
-        navigator.vibrate([500, 150, 500, 150, 500])
-      }, 1400)
+      vibrateRef.current = setInterval(
+        () => navigator.vibrate([500, 150, 500, 150, 500]),
+        1400
+      )
     }
-  }, [beep])
+  }, [])
 
   const stop = useCallback(() => {
+    _pendingPlay = null
     clearInterval(intervalRef.current)
     clearInterval(vibrateRef.current)
     intervalRef.current = null
